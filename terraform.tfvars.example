@@ -1,0 +1,42 @@
+aws_region   = "ap-northeast-1"
+project_name = "ensemble"
+environment  = "production"
+
+vpc_cidr = "10.0.0.0/16"
+
+availability_zones = [
+  "ap-northeast-1a",
+  "ap-northeast-1c"
+]
+
+# First deployment:
+# 1. Create ECR with `terraform apply -target=aws_ecr_repository.api`
+# 2. Build and push the Docker image
+# 3. Run normal `terraform apply`
+app_image_tag = "latest"
+
+ecs_cpu          = 1024
+ecs_memory       = 2048
+ecs_desired_count = 1
+
+db_name                 = "ensemble"
+db_username             = "ensemble_admin"
+db_instance_class       = "db.t4g.micro"
+db_allocated_storage    = 20
+db_max_allocated_storage = 100
+db_multi_az             = false
+
+# Put your existing ACM certificate ARN here for HTTPS.
+# Leave empty during initial ALB testing.
+certificate_arn = ""
+
+# Example: "your-github-org/ensemble-api"
+# Leave empty if you do not want Terraform to create GitHub OIDC resources yet.
+github_repository = "YOUR_ORG/YOUR_REPO"
+github_branch     = "main"
+
+# false = one NAT Gateway, lower cost
+# true  = one NAT Gateway per AZ, more resilient
+enable_nat_gateway_per_az = false
+
+enable_deletion_protection = false
