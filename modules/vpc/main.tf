@@ -142,9 +142,12 @@ resource "aws_route_table_association" "app" {
 
   subnet_id = aws_subnet.app[count.index].id
 
-  route_table_id = var.enable_nat_gateway_per_az
+  route_table_id = (
+    var.enable_nat_gateway_per_az
     ? aws_route_table.app[count.index].id
     : aws_route_table.app[0].id
+  )
+
 }
 
 resource "aws_route_table" "db" {

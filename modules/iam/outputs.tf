@@ -1,9 +1,9 @@
 output "ecs_execution_role_arn" {
-  value = aws_iam_role.ecs_execution.arn
+  value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole"
 }
 
 output "ecs_task_role_arn" {
-  value = aws_iam_role.ecs_task.arn
+  value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole"
 }
 
 output "github_actions_role_arn" {

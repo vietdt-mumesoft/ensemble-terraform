@@ -30,14 +30,6 @@ output "alb_dns_name" {
   value = module.alb.alb_dns_name
 }
 
-output "rds_endpoint" {
-  value = module.rds.rds_endpoint
-}
-
-output "rds_secret_arn" {
-  value     = module.rds.db_secret_arn
-  sensitive = true
-}
 
 output "github_actions_role_arn" {
   value = module.iam.github_actions_role_arn

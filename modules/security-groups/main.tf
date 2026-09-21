@@ -60,27 +60,3 @@ resource "aws_security_group" "ecs" {
   }
 }
 
-resource "aws_security_group" "rds" {
-  name        = "${var.project_name}-${var.environment}-rds-sg"
-  description = "RDS MySQL only from ECS"
-  vpc_id      = var.vpc_id
-
-  ingress {
-    description     = "MySQL from ECS"
-    protocol        = "tcp"
-    from_port       = 3306
-    to_port         = 3306
-    security_groups = [aws_security_group.ecs.id]
-  }
-
-  egress {
-    protocol    = "-1"
-    from_port   = 0
-    to_port     = 0
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "${var.project_name}-${var.environment}-rds-sg"
-  }
-}

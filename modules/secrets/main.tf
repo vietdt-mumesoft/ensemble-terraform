@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "app" {
-  name                    = "${var.project_name}/${var.environment}/app"
+  name                    = "${var.project_name}/${var.project_name}-api/${var.environment}"
   description             = "Application secrets for Ensemble ECS tasks"
   recovery_window_in_days = 7
 }

@@ -11,60 +11,6 @@ data "aws_iam_policy_document" "ecs_task_assume_role" {
   }
 }
 
-resource "aws_iam_role" "ecs_execution" {
-  name               = "${var.project_name}-${var.environment}-ecs-execution"
-  assume_role_policy = data.aws_iam_policy_document.ecs_task_assume_role.json
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_execution" {
-  role       = aws_iam_role.ecs_execution.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
-
-resource "aws_iam_role_policy" "ecs_execution_secrets" {
-  name = "${var.project_name}-${var.environment}-ecs-execution-secrets"
-  role = aws_iam_role.ecs_execution.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "secretsmanager:GetSecretValue"
-        ]
-        Resource = [
-          var.db_secret_arn,
-          var.app_secret_arn
-        ]
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role" "ecs_task" {
-  name               = "${var.project_name}-${var.environment}-ecs-task"
-  assume_role_policy = data.aws_iam_policy_document.ecs_task_assume_role.json
-}
-
-resource "aws_iam_role_policy" "ecs_task_app" {
-  name = "${var.project_name}-${var.environment}-ecs-task-app"
-  role = aws_iam_role.ecs_task.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "ses:SendEmail",
-          "ses:SendRawEmail"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
 
 data "aws_caller_identity" "current" {}
 
@@ -137,7 +83,7 @@ resource "aws_iam_role_policy" "github_actions" {
           "ecr:PutImage",
           "ecr:UploadLayerPart"
         ]
-        Resource = aws_ecr_repository.api.arn
+        Resource = "arn:aws:ecr:*:*:repository/${var.project_name}-api"
       },
       {
         Effect = "Allow"
@@ -147,8 +93,8 @@ resource "aws_iam_role_policy" "github_actions" {
           "ecs:UpdateService"
         ]
         Resource = [
-          aws_ecs_cluster.this.arn,
-          aws_ecs_service.api.id
+          "arn:aws:ecs:*:*:cluster/${var.project_name}-${var.environment}-cluster",
+          "arn:aws:ecs:*:*:service/${var.project_name}-${var.environment}-cluster/${var.project_name}-${var.environment}"
         ]
       },
       {
@@ -157,8 +103,7 @@ resource "aws_iam_role_policy" "github_actions" {
           "iam:PassRole"
         ]
         Resource = [
-          aws_iam_role.ecs_execution.arn,
-          aws_iam_role.ecs_task.arn
+          "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole"
         ]
       }
     ]

@@ -46,9 +46,6 @@ variable "ecr_repository_url" {
   type = string
 }
 
-variable "db_secret_arn" {
-  type = string
-}
 
 variable "app_secret_arn" {
   type = string
@@ -77,4 +74,5 @@ variable "target_group_arn" {
 variable "http_listener_arn" {
   type = string
 }
+
 

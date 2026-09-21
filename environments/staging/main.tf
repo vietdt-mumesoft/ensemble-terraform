@@ -32,19 +32,6 @@ module "ecr" {
   environment = var.environment
 }
 
-module "rds" {
-  source = "../../modules/rds"
-  project_name = var.project_name
-  environment = var.environment
-  db_name = var.db_name
-  db_username = var.db_username
-  db_instance_class = var.db_instance_class
-  db_allocated_storage = var.db_allocated_storage
-  db_max_allocated_storage = var.db_max_allocated_storage
-  db_multi_az = var.db_multi_az
-  db_subnet_ids = module.vpc.db_subnet_ids
-  rds_sg_id = module.security-groups.rds_sg_id
-}
 
 module "secrets" {
   source = "../../modules/secrets"
@@ -58,7 +45,6 @@ module "iam" {
   environment = var.environment
   github_repository = var.github_repository
   github_branch = var.github_branch
-  db_secret_arn = module.rds.db_secret_arn
   app_secret_arn = module.secrets.app_secret_arn
 }
 
@@ -76,7 +62,6 @@ module "ecs" {
   celery_app = var.celery_app
   db_name = var.db_name
   ecr_repository_url = module.ecr.repository_url
-  db_secret_arn = module.rds.db_secret_arn
   app_secret_arn = module.secrets.app_secret_arn
   ecs_execution_role_arn = module.iam.ecs_execution_role_arn
   ecs_task_role_arn = module.iam.ecs_task_role_arn
