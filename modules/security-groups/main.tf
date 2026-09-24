@@ -1,4 +1,6 @@
 resource "aws_security_group" "alb" {
+  count = var.alb_sg_id == "" ? 1 : 0
+
   name        = "${var.project_name}-${var.environment}-alb-sg"
   description = "ALB public ingress"
   vpc_id      = var.vpc_id
@@ -35,6 +37,10 @@ resource "aws_security_group" "alb" {
   }
 }
 
+locals {
+  alb_sg_id = var.alb_sg_id != "" ? var.alb_sg_id : aws_security_group.alb[0].id
+}
+
 resource "aws_security_group" "ecs" {
   name        = "${var.project_name}-${var.environment}-ecs-sg"
   description = "ECS task security group"
@@ -45,7 +51,7 @@ resource "aws_security_group" "ecs" {
     protocol        = "tcp"
     from_port       = 8000
     to_port         = 8000
-    security_groups = [aws_security_group.alb.id]
+    security_groups = [local.alb_sg_id]
   }
 
   egress {

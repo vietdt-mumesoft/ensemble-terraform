@@ -10,7 +10,7 @@ terraform {
 
   backend "s3" {
     bucket       = "maya-ensemble-terraform-state"
-    key          = "environments/staging/terraform.tfstate"
+    key          = "environments/production/terraform.tfstate"
     region       = "ap-northeast-1"
     encrypt      = true
     use_lockfile = true

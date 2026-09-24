@@ -13,7 +13,7 @@ variable "project_name" {
 variable "environment" {
   description = "Environment name"
   type        = string
-  default     = "staging"
+  default     = "production"
 }
 
 variable "existing_vpc_name" {

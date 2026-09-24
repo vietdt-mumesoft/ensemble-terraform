@@ -38,10 +38,6 @@ variable "celery_app" {
   type = string
 }
 
-variable "db_name" {
-  type = string
-}
-
 variable "ecr_repository_url" {
   type = string
 }
